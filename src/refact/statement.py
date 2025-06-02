@@ -4,16 +4,8 @@ def format_currency(amount):
         locale.setlocale(locale.LC_ALL, "en_US.UTF-8")
         return locale.currency(amount, grouping=True)
 
-def statement(invoice: dict, plays: dict):
-    total_amount = 0
-    volume_credits = 0
-    result = f"Statement for {invoice['customer']}\n"
-
-    for perf in invoice["performances"]:
-        play = plays[perf["playID"]]
-        this_amount = 0
-
-        match play["type"]:
+def calculate_amount(play, perf):
+    match play["type"]:
             case "tragedy":
                 this_amount = 40000
                 if perf["audience"] > 30:
@@ -25,6 +17,16 @@ def statement(invoice: dict, plays: dict):
                 this_amount += 300 * perf["audience"]
             case _:
                 raise Exception(f"unknown type: ${play['type']}")
+    return this_amount
+
+def statement(invoice: dict, plays: dict):
+    total_amount = 0
+    volume_credits = 0
+    result = f"Statement for {invoice['customer']}\n"
+
+    for perf in invoice["performances"]:
+        play = plays[perf["playID"]]
+        this_amount = calculate_amount(play, perf)
 
         # add volume credits
         volume_credits += max(perf["audience"] - 30, 0)
