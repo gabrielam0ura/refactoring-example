@@ -25,6 +25,9 @@ def calculate_volume_credits(play, perf):
         volume_credits += perf["audience"] // 5
     return volume_credits
 
+def format_line(play, perf, this_amount):
+    return f"  {play['name']}: {format_currency(this_amount/100)} ({perf['audience']} seats)\n"
+
 def statement(invoice: dict, plays: dict):
     total_amount = 0
     volume_credits = 0
@@ -36,9 +39,7 @@ def statement(invoice: dict, plays: dict):
         this_amount = calculate_amount(play, perf)
 
         # print line for this order
-        result += (
-            f"  {play['name']}: {format_currency(this_amount/100)} ({perf['audience']} seats)\n"
-        )
+        result += format_line(play, perf, this_amount)
         total_amount += this_amount
 
     result += f"Amount owed is {format_currency(total_amount/100)}\n"
