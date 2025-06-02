@@ -36,6 +36,7 @@ def calculate_total_amount(invoice, plays):
     return total
 
 def statement(invoice: dict, plays: dict):
+    total_amount = 0
     volume_credits = 0
     result = f"Statement for {invoice['customer']}\n"
 
@@ -46,7 +47,7 @@ def statement(invoice: dict, plays: dict):
         # print line for this order
         result += format_line(play, perf, this_amount)
     
-    total_amount += calculate_total_amount(invoice, plays)
+    total_amount = calculate_total_amount(invoice, plays)
     result += f"Amount owed is {format_currency(total_amount/100)}\n"
     result += f"You earned {volume_credits} credits\n"
     return result
