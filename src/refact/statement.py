@@ -19,6 +19,12 @@ def calculate_amount(play, perf):
                 raise Exception(f"unknown type: ${play['type']}")
     return this_amount
 
+def calculate_volume_credits(play, perf):
+    volume_credits = max(perf["audience"] - 30, 0)
+    if "comedy" == play["type"]:
+        volume_credits += perf["audience"] // 5
+    return volume_credits
+
 def statement(invoice: dict, plays: dict):
     total_amount = 0
     volume_credits = 0
@@ -26,13 +32,8 @@ def statement(invoice: dict, plays: dict):
 
     for perf in invoice["performances"]:
         play = plays[perf["playID"]]
+        volume_credits += calculate_volume_credits(play, perf)
         this_amount = calculate_amount(play, perf)
-
-        # add volume credits
-        volume_credits += max(perf["audience"] - 30, 0)
-        # add extra credit for every ten comedy attendees
-        if "comedy" == play["type"]:
-            volume_credits += perf["audience"] // 5
 
         # print line for this order
         result += (
